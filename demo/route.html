@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Underscore & Director & Requirejs</title>
+
+	<script src="../src/base.js" ></script>
+
+	<!-- 使用require.js引入js和css文件, 根据实际情况决定从本地缓存中或者远程加载 -->
+	<script type="text/javascript" src="../dist/storage.js" > </script>
+
+	<!-- require 属性请求资源列表,使用逗号或者分号隔开 -->
+	<script type="text/javascript" src="../src/require.js"></script>
+	<script src="../src/route.js"></script>
+</head>
+
+<body>
+	<div id="contentid" require="frag/g.tpl" bind="js/bind.json" observer></div>
+
+	<a href="#module4">Route</a>
+	<route>
+		
+	</route>
+<script>
+
+	Route.init({
+	    'module1': function(){
+	        console.log(1);
+	    },
+	    'module2/:name/:age': function(){
+	        console.log(2, arguments);
+	    },
+	    'module3(/:name)(/:age)': function(){
+	        console.log('3', arguments);
+	    },
+		module4: {
+			before:function(){
+				console.dir('before');
+			},
+			'require':'frag/h.tpl',
+			'bind':'js/bind0.json',
+			//ele:document.getElementById('contentid')
+		},
+	    '*': function(){
+	        console.log(404);
+	    }
+	},'#contentid');
+</script>
+<!--<script data-baseurl="./" data-main="main.js" src="libs/require.js" id="main"></script>-->
+</body>
+</html>

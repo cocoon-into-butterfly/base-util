@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+
+<html >
+	<head>
+		<meta charset="utf-8">
+
+		<!-- 普通页面引入js和css, 页面每次打开都从网络请求. -->
+		<!--
+		<link rel="stylesheet" href="css/a.css"/>
+		<script type="text/javascript" src="js/a.js"/></script>
+		<script type="text/javascript" src="js/b.js"/></script>
+		<script type="text/javascript" src="js/c.js"/></script>
+		<script type="text/javascript" src="js/d.js"/></script>
+		-->
+
+		<!-- 使用require.js引入js和css文件, 根据实际情况决定从本地缓存中或者远程加载 -->
+		<script src="../src/base.js" ></script>
+		<script type="text/javascript" src="../src/storage.js" > </script>
+
+
+		<!--
+			请求地址写入节点内部, 如果以//开头表示注释,当前资源跳过
+		-->
+		<script type="text/javascript" src="../dist/require.js" require="" >
+			css/a.css
+			js/a.js
+			js/b.js
+			js/c.js
+			js/d.js
+		</script>
+		<title>Demo1</title>
+	</head>
+	<body>
+		Demo1
+	</body>
+</html>

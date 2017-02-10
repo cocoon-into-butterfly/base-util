@@ -1,0 +1,11 @@
+<require src="css/b.css" model="release" version="v2.0.0" cdncache="true" notify="IncludeNotify" ></require>
+<div class="test">
+Include  : f
+</div>
+<script type="text/javascript">
+
+	Base.Require.bindNotify('IncludeNotify',function(e){
+		console.log('Include Notify')
+	});
+</script>
+<include src="frag/g.tpl" bind="js/bind.json" observer></include>

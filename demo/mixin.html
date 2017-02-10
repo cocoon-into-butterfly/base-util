@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<script src="../src/base.js" ></script>
+		<script src="../dist/mixin.js"  charset="utf-8"></script>
+		<title></title>
+	</head>
+	<body>
+		<script type="text/javascript">
+
+		//例1(基本使用)
+		var Demo1={
+		}
+		Base.extend(Demo1, {
+		  		a:function(){
+		  			//do ...
+		  			console.log('Demo1 --> a')
+		  		},
+
+		  		b:function(){
+		  			//do ...
+		  			console.log('Demo1 --> b')
+		  		}
+		  });
+		  Demo1.a();
+		  Demo1.b();
+
+
+
+		  //例2(数组):
+		  var Demo2={
+		  }
+		  Base.extend(Demo2, [{
+		   			a:function(){
+		   				//do ...
+		   				console.log('Demo2 --> a')
+		   			},
+
+		   			b:function(){
+		   				//do ...
+		   				console.log('Demo2 --> b')
+		   			}
+		   		  },{
+		   			c:function(){
+		   				//do ...
+		   				console.log('Demo2 --> c')
+		   			}
+		   		 }]
+		   );
+		   Demo2.a();
+		   Demo2.b();
+		   Demo2.c();
+
+
+
+		   //例3(数组):
+		   var Demo3={
+ 		  }
+		   function Fn(){
+		   	//do ...
+		   }
+		   var obj1 =new Fn();
+		  Base.extend([Demo3,obj1], [{
+		   			a:function(){
+		   				//do ...
+		   				console.log('Demo3 --> a')
+		   			},
+
+		   			b:function(){
+		   				console.log('Demo3 --> b')
+		   			}
+		   		  },{
+		   			c:function(){
+		   				console.log('Demo3 --> c')
+		   			}
+		   		 }]
+		   );
+		   Demo3.a();
+		   Demo3.b();
+		   obj1.c()
+		   var obj2 =new Fn();
+		   obj2.c                    // --->  undefined
+
+
+
+
+		  // 例4(原型链赋值. 注意和例3的区别,执行结果一致,但是绑定原理不一样):
+		  var Demo4={
+		 }
+		   function Fn(){
+		   	//do ...
+		   }
+		  Base.extend([ Demo4 , Fn.prototype], [{
+		   			a:function(){
+		   				console.log('Demo4 --> a')
+		   			},
+		   			b:function(){
+		   				console.log('Demo4 --> b')
+		   			}
+		   		  },{
+		   			c:function(){
+		   				console.log('Demo4 --> c')
+		   			}
+		   		 },
+		   		 {field:'field'}
+		   		]
+		   );
+		   Demo4.a();
+		   Demo4.b();
+		   var obj1 =new Fn();
+		   obj1.c()
+
+		  	var obj2 =new Fn();
+		   obj2.c()
+
+
+		  //例5(模块导入)
+		  var Demo5={
+		 }
+		  Base.extend(Demo5,(function(){
+		   	function fn(){
+		   		//do ...
+		   		console.log('Demo5 --> fn')
+		   	}
+		   	return {
+		   		a:function(){
+		   			//do ...
+		   			console.log('Demo5 --> a')
+		   		},
+
+		   		b:function(){
+		   			console.log('Demo5 --> b')
+		   		},
+		   		fn:fn
+		   	}
+		   })() )
+
+
+		  Demo5.a();
+		  Demo5.b();
+		  Demo5.fn();
+		</script>
+
+
+	</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<script src="../src/base.js" ></script>
+		<script src="../src/is.js"  charset="utf-8"></script>
+		<title></title>
+	</head>
+	<body>
+		<script type="text/javascript">
+
+			var t="abc"
+			console.log(Is.str(t))
+
+			t=123
+			console.log(Is.number(t))
+
+
+			t=true
+			console.log(Is.bool(t))
+
+
+			t=function(){
+
+			}
+			console.log(Is.fn(t))
+
+
+
+			t=[]
+			console.log(Is.array(t))
+
+			t={}
+			console.log(Is.obj(t))
+
+
+			t=/^\s$/;
+			console.log(Is.regex(t))
+
+			t=null;
+			console.log(Is.null(t))
+
+
+			t=undefined
+			console.log(Is.und(t))
+
+			t=document.body;
+			console.log(Is.ele(t));
+
+			t=''
+			console.log(Is.blank(t));
+
+			t=' '
+			console.log(Is.blank(t));
+			t='\n'
+			console.log(Is.blank(t));
+
+			console.log(Is.empty([]));
+			console.log(Is.empty(null));
+			console.log(Is.empty(undefined) );
+			console.log(Is.empty(''));
+			console.log(Is.empty('\t'));
+			console.log(Is.empty('   '));
+
+			console.log(Is.empty(false));
+			console.log(Is.empty(true));
+			console.log(Is.empty({}));
+			console.log(Is.empty(window));
+
+
+			console.log(Is.time('2017-01-01 23:23:23.1234'));
+			console.log(Is.time('2017年1月1日 23时23分23秒'));
+			console.log(Is.time(1486009338057));
+			console.log(Is.time('1486009338057'));
+			console.log(Is.time('1486011424'));
+
+		</script>
+
+
+	</body>
+</html>
