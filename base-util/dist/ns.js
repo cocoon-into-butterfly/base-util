@@ -1,1 +1,0 @@
-(function(g,m){function e(e,h,d){var a=e,b=arguments;switch(b.length){case 1:a=g;h=b[0];d={};break;case 2:Is.str(b[0])&&(d=b[1],h=b[0],a=g);case 3:d||(d={})}var b=h.split(/\.|\/|\\|\|/g),l=b.length-1,k=b[l],c,f=[];for(i=0;i<l;i++)if(c=b[i])f.push(c),Is.str(c)?(!a[c]&&(a[c]={NS:f.join(".")}),a=a[c]):a=c;f.push(k);d.NS=f.join(".");a[k]=d;return a[k]}g.NS=e;Base.NS=e})(window);
