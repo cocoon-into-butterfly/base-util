@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<script src="../src/base.js" ></script>
+		<script src="../src/is.js"  charset="utf-8"></script>
+		<script src="../src/xhr.js"  charset="utf-8"></script>
+		<title></title>
+	</head>
+	<body>
+		<script type="text/javascript">
+			Xhr.get({
+				url:'frag/a.html'
+			});
+			Xhr.get('frag/a.html');
+			Xhr.post('frag/a.html');
+			Xhr.ajax('frag/a.html');
+
+			Xhr.get({
+				url:'frag/a.html',
+			});
+			Xhr.post({
+				url:'frag/a.html',
+			});
+			Xhr.ajax({
+				url:'frag/a.html',
+			});
+
+			//测试同步请求
+			console.log("同步请求 -->",Xhr.get({
+				url:'js/test.json',
+
+				//true:异步请求, false:同步请求
+				async:false
+			}));
+
+
+			//普通ajax请求
+			Xhr.ajax({
+				method:'get',
+				url:'js/test.json',
+				dataType:'json',
+				credentials:true,
+				async:false,
+				headers:{
+					'Test-header':'Test'
+				},
+				success:function(res){
+					console.log(res);
+				},
+				error:function(res){
+					console.log(res);
+				}
+			});
+
+			//ajax表单提交数据
+			Xhr.ajax({
+				method:'post',
+				url:'js/test.json',
+				dataType:'json',
+				credentials:true,
+				async:false,
+				headers:{
+					'Test-header':'Test',
+					'Content-Type':'application/x-www-form-urlencoded'
+				},
+				data:'a=b&c=d',
+				success:function(res){
+					console.log(res);
+				},
+				error:function(res){
+					console.log(res);
+				}
+			});
+
+			//ajax表单提交FormData数据
+			var fd = new FormData();
+			fd.append("CustomField", "CustomField");
+			fd.append("Field", "Field");
+			Xhr.ajax({
+				method:'post',
+				url:'js/test.json',
+				dataType:'json',
+				headers:{
+					//FormData提交数据不能指定Content-Type
+					//'Content-Type':'application/x-www-form-urlencoded'
+				},
+				data:fd,
+				success:function(res){
+					console.log(res);
+				},
+				error:function(res){
+					console.log(res);
+				}
+			});
+
+
+			//remote call
+			Xhr.call({
+				url:'js/call.json',
+				success:function(res){
+					console.log(res);
+				},
+				error:function(res){
+					console.log(res);
+				}
+			});
+
+			//remote call
+			Xhr.call({
+				url:'js/call1.json',
+				success:function(res){
+					console.log(res);
+				},
+				error:function(res){
+					console.log(res);
+				}
+			});
+		</script>
+	</body>
+</html>

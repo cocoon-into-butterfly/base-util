@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<script src="../src/base.js" ></script>
+		<script src="../dist/ready.js"  charset="utf-8"></script>
+		<title></title>
+	</head>
+
+	<body onload="bodyload()">
+		<script type="text/javascript">
+			function bodyload(){
+				ready(function(){
+					console.log('readed');
+				});
+			}
+			setTimeout(function(){
+				ready(function(){
+					console.log('hello word');
+				});
+			},1000)
+
+			ready(function(){
+				console.log('ready');
+			});
+
+			Ready.before(function (){console.dir("before 1")})
+			Ready.before(function (){console.dir("before 2")})
+			Ready.before(function (){console.dir("before 3")})
+		  //ready事件
+		 	Ready.ready(function (){console.dir("ready 1")})
+		  Ready.ready(function (){console.dir("ready 2")})
+		  Ready.ready(function (){console.dir("ready 3")})
+		  //after/setup事件
+		  Ready.setup(function C(){console.dir("after 1")})
+		  Ready.after(function C(){console.dir("after 2")})
+		  Ready.after(function C(){console.dir("after 3")})
+
+		</script>
+	</body>
+</html>

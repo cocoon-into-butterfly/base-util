@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<!--
+	uglifyjs 在线压缩
+	http://marijnhaverbeke.nl/uglifyjs
+ -->
+<project
+	name="base-util"
+	basedir="."
+	default="build">
+
+	<property file="build.properties"/>
+	<import file="compile-file.xml"/>
+	<property name="base-util-src" value="${basedir}/src/"/>
+	<property name="base-util-build" value="${basedir}/build/"/>
+	<property name="base-util-dist" value="${basedir}/dist/"/>
+
+
+	<property environment="env"/>
+	<taskdef resource="net/sf/antcontrib/antlib.xml"/>
+	<taskdef name="jscomp" classname="com.google.javascript.jscomp.ant.CompileTask"/>
+	<tstamp prefix="timestamp">
+		<format property="day" pattern="yyyyMMdd"/>
+		<format property="time" pattern="HH:mm:ss"/>
+		<format property="dt" pattern="yyyy-MM-dd HH:mm:ss"/>
+	</tstamp>
+	<!-- <target
+		name="build"
+		depends="clean,compress-css,compile-file,copy-dir,remote-deploy"
+		description="build">
+		<echo>build</echo>
+	</target> -->
+	<target
+		name="build"
+		depends="clean,compile-require,compile-base,compile-all,compile-lapp"
+		description="build">
+		<echo>build</echo>
+	</target>
+
+
+	<target name="compile-lapp" >
+		<copydir src="${base-util-src}/lapp" dest="${base-util-build}/lapp"></copydir>
+		<echo file="${base-util-build}/lapp/main.html" append="true"><![CDATA[<script type="text/javascript">]]></echo>
+		<concat destfile="${base-util-build}/lapp/main.html" append="true">
+			<filelist files="${base-util-dist}/base.js"/>
+			<filelist files="${base-util-dist}/storage.js"/>
+			<filelist files="${base-util-dist}/require.js"/>
+			<filelist files="${base-util-dist}/options.js"/>
+		</concat>
+		<echo file="${base-util-build}/lapp/main.html" append="true"><![CDATA[</script>]]></echo>
+		<echo file="${base-util-build}/lapp/main.jsp" append="true"><![CDATA[<script type="text/javascript">]]></echo>
+		<concat destfile="${base-util-build}/lapp/main.jsp" append="true">
+			<filelist files="${base-util-dist}/base.js"/>
+			<filelist files="${base-util-dist}/storage.js"/>
+			<filelist files="${base-util-dist}/require.js"/>
+			<filelist files="${base-util-dist}/options.js"/>
+		</concat>
+		<echo file="${base-util-build}/lapp/main.jsp" append="true"><![CDATA[</script>]]></echo>
+	</target>
+
+
+
+<!-- = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = -->
+	<target name="compile-all" >
+
+		<touch file="${base-util-build}/all.src.js"/>
+		<echo file="${base-util-build}/all.src.js" append="true">
+// build time: ${timestamp.day}
+		</echo>
+		<foreach list="${allFileList}" target="merge-all-js" param="merge.file" delimiter=","></foreach>
+		<jscomp compilationLevel="${compilationLevel}" warning="default" debug="${debug}" output="${base-util-build}/all.min.js"
+				sourceMapOutputFile="${base-util-build}/all.js.map"
+			>
+			<sources dir="${basedir}">
+				<file name="${base-util-build}/all.src.js"/>
+			</sources>
+		</jscomp>
+		<!-- 替换map文件中sources -->
+		<replace file="${base-util-build}/all.js.map" token="&quot;sources&quot;:[&quot;build/" value="&quot;sources&quot;:[&quot;"/>
+
+	</target>
+
+	<target name="merge-all-js">
+		<propertyregex property="merge.name"
+			input="${merge.file}"
+			regexp="\s"
+			replace=""/>
+		<if>
+			<equals arg1="${merge.name}" arg2="" />
+			<then></then>
+			<else>
+				<concat destfile="${base-util-build}/all.src.js" append="true">
+					<filelist files="${base-util-src}/${merge.name}"/>
+				</concat>
+	<!--文件尾部插入空行， 不能省略 -->
+	<echo file="${base-util-build}/all.src.js" append="true">
+	</echo>
+			</else>
+		</if>
+	</target>
+
+
+
+<!-- = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = -->
+	<target name="compile-base" >
+		<touch file="${base-util-build}/base.src.js"/>
+		<echo file="${base-util-build}/base.src.js" append="true">
+// build time: ${timestamp.day}
+		</echo>
+		<foreach list="${baseFileList}" target="merge-base-js" param="merge.file" delimiter=","></foreach>
+		<jscomp compilationLevel="${compilationLevel}" warning="default" debug="${debug}" output="${base-util-build}/base.min.js"
+				sourceMapOutputFile="${base-util-build}/base.js.map"
+			>
+			<sources dir="${basedir}">
+				<file name="${base-util-build}/base.src.js"/>
+			</sources>
+		</jscomp>
+		<!-- 替换map文件中sources -->
+		<replace file="${base-util-build}/base.js.map" token="&quot;sources&quot;:[&quot;build/" value="&quot;sources&quot;:[&quot;"/>
+
+	</target>
+
+	<target name="merge-base-js">
+		<propertyregex property="merge.name"
+			input="${merge.file}"
+			regexp="\s"
+			replace=""/>
+		<if>
+			<equals arg1="${merge.name}" arg2="" />
+			<then></then>
+			<else>
+				<concat destfile="${base-util-build}/base.src.js" append="true">
+					<filelist files="${base-util-src}/${merge.name}"/>
+				</concat>
+	<!--文件尾部插入空行， 不能省略 -->
+	<echo file="${base-util-build}/base.src.js" append="true">
+	</echo>
+			</else>
+		</if>
+	</target>
+
+
+
+
+<!-- = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = -->
+	<target name="compile-require" >
+		<touch file="${base-util-build}/require.src.js"/>
+		<echo file="${base-util-build}/require.src.js" append="true">
+// build time: ${timestamp.day}
+		</echo>
+		<foreach list="${requireFileList}" target="merge-require-js" param="merge.file" delimiter=","></foreach>
+		<jscomp compilationLevel="${compilationLevel}" warning="default" debug="${debug}" output="${base-util-build}/require.min.js"
+				sourceMapOutputFile="${base-util-build}/require.js.map"
+			>
+			<sources dir="${basedir}">
+				<file name="${base-util-build}/require.src.js"/>
+			</sources>
+		</jscomp>
+		<!-- 替换map文件中sources -->
+		<replace file="${base-util-build}/require.js.map" token="&quot;sources&quot;:[&quot;build/" value="&quot;sources&quot;:[&quot;"/>
+
+	</target>
+
+	<target name="merge-require-js">
+		<propertyregex property="merge.name"
+			input="${merge.file}"
+			regexp="\s"
+			replace=""/>
+		<if>
+			<equals arg1="${merge.name}" arg2="" />
+			<then></then>
+			<else>
+				<concat destfile="${base-util-build}/require.src.js" append="true">
+					<filelist files="${base-util-src}/${merge.name}"/>
+				</concat>
+<!--文件尾部插入空行， 不能省略 -->
+<echo file="${base-util-build}/require.src.js" append="true">
+</echo>
+			</else>
+		</if>
+	</target>
+
+	<target name="clean">
+		<delete includeemptydirs="true">
+			<fileset dir="build">
+				<include name="**/*"/>
+			</fileset>
+		</delete>
+	</target>
+</project>

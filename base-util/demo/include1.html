@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<!--
+	 model="release"  表示线上模式, 资源请求走本地缓存,只有version变化后去服务器请求最新资源
+	 model="dev"  表示开发模式, 所有资源走远程请求
+-->
+<html model="release" version="1.0.0" cdncache="true" notify="IncludeTestNotify" assets="" onprogress="" onsuccess=" ">
+	<head>
+		<meta charset="utf-8">
+		<script src="../src/base.js" ></script>
+
+		<!-- 使用require.js引入js和css文件, 根据实际情况决定从本地缓存中或者远程加载 -->
+		<script type="text/javascript" src="../dist/storage.js" > </script>
+
+		<!-- require 属性请求资源列表,使用逗号或者分号隔开 -->
+		<script type="text/javascript" src="../src/require.js"></script>
+		<title>Include 标签</title>
+		<script type="text/javascript">
+			//接收全局引入通知事件
+			Base.Require.bindNotify('IncludeTestNotify',function(e){
+				console.log('Include Test Notify')
+			});
+		</script>
+	</head>
+	<body>
+		<include src="frag/g.tpl" bind="js/bind.json" ></include>
+		<div src="frag/g.tpl" bind="js/bind.json" observer><include src="frag/g.tpl" bind="js/bind.json" ></include></div>
+	</body>
+</html>
