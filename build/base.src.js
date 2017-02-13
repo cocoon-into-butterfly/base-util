@@ -1,5 +1,5 @@
 
-// build time: 20170210
+// build time: 20170212
 		/* minifyOnSave, filenamePattern: ../dist/$1.$2 */
 
 (function(g, und) {
@@ -1434,113 +1434,6 @@
 		}
 	}
 
-})(window);
-
-	/* minifyOnSave, filenamePattern: ../dist/$1.$2 */
-(function(g, und) {
-
-	var routes = {},
-		defaultAction;
-
-	var Route = {
-
-		/**
-		 * 初始化路由
-		 * @param  {Object} map  路由规则
-		 * @param  {Element/String} root 根节点
-		 * @return {Void}
-		 */
-		init: function(map, root) {
-			var obj, before, require, bind, ele;
-			for (var k in map) {
-				obj = map[k];
-				before = require = bind = ele = und;
-				if (k == '*') {
-					obj && (defaultAction = obj);
-				} else {
-					if ((typeof obj === 'function')) {
-						before = obj;
-					} else {
-						before = obj['before'];
-						require = obj['require'];
-						bind = obj['bind'];
-						ele = obj['ele'] || root;
-						ele = typeof ele === 'string' ? document.querySelector(ele) : ele;
-					}
-					routes[k] = {
-						before: before,
-						ele: ele,
-						require: require,
-						bind: bind
-					};
-				}
-			}
-			fire(g.location.hash);
-		},
-
-		/**
-		 * 动态触发路由
-		 * @type {[type]}
-		 */
-		trigger: fire
-	};
-
-	/**
-	 * 执行全部匹配路由
-	 * @param  {String} onChangeEvent 路径
-	 * @return {Void}
-	 */
-	function fire(path) {
-		path = path || '*';
-		var url = path.replace(/.*#/, '');
-		var found = false;
-		for (var path in routes) {
-			var reg = getRegExp(path);
-			var result = reg.exec(url);
-			if (result && result[0] && result[0] != '') {
-				var handler = routes[path];
-				if (handler) {
-					handler.before && handler.before.apply(null, result.slice(1));
-					if (handler.ele) {
-						handler.bind && handler.ele.setAttribute('bind', handler.bind);
-						handler.require && handler.ele.setAttribute('require', handler.require);
-					}
-				}
-				found = true;
-			}
-		}
-		if (!found && defaultAction) {
-			defaultAction();
-		}
-	}
-
-	/**
-	 * 引自backbone，非常牛逼的正则
-	 * @param route
-	 * @returns {RegExp}
-	 */
-	function getRegExp(route) {
-		var optionalParam = /\((.*?)\)/g;
-		var namedParam = /(\(\?)?:\w+/g;
-		var splatParam = /\*\w+/g;
-		var escapeRegExp = /[\-{}\[\]+?.,\\\^$|#\s]/g;
-		route = route.replace(escapeRegExp, '\\$&')
-			.replace(optionalParam, '(?:$1)?')
-			.replace(namedParam, function(match, optional) {
-				return optional ? match : '([^/?]+)';
-			})
-			.replace(splatParam, '([^?]*?)');
-		return new RegExp('^' + route + '(?:\\?([\\s\\S]*))?$');
-	}
-
-	'onhashchange' in g && (
-		g.addEventListener('hashchange', function(onChangeEvent) {
-			fire(onChangeEvent && onChangeEvent.newURL || g.location.hash);
-		})
-	);
-
-	//export
-	g.Route = Route;
 })(window);
 
 	

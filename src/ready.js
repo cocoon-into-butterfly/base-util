@@ -34,6 +34,7 @@
 			//after
 			[]
 		],
+		reg = /complete|loaded|interactive/,
 		sub = 'DOMContentLoaded',
 		wasReady = false,
 		global = document;
@@ -68,7 +69,7 @@
 	//global.addEventListener("DOMContentLoaded", handler, false);
 
 	function bind(i, fn) {
-		wasReady ? fn.call(fn) : array[i].push(fn);
+		wasReady || reg.test(g.readyState) ? fn.call(fn) : array[i].push(fn);
 	}
 
 	var ready = {

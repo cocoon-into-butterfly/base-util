@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Underscore & Director & Requirejs</title>
+    <title>Route </title>
 
 	<script src="../src/base.js" ></script>
 
@@ -10,42 +10,56 @@
 	<script type="text/javascript" src="../dist/storage.js" > </script>
 
 	<!-- require 属性请求资源列表,使用逗号或者分号隔开 -->
-	<script type="text/javascript" src="../src/require.js"></script>
-	<script src="../src/route.js"></script>
+	<script type="text/javascript" src="../src/require.js" require="../src/route.js" notify="routeNotify" ></script>
+	<!-- <script src="../src/route.js"></script> -->
 </head>
 
 <body>
 	<div id="contentid" require="frag/g.tpl" bind="js/bind.json" observer></div>
 
-	<a href="#module4">Route</a>
-	<route>
-		
-	</route>
-<script>
+	<a href="#module1">module1</a>
 
-	Route.init({
-	    'module1': function(){
-	        console.log(1);
-	    },
-	    'module2/:name/:age': function(){
-	        console.log(2, arguments);
-	    },
-	    'module3(/:name)(/:age)': function(){
-	        console.log('3', arguments);
-	    },
-		module4: {
-			before:function(){
-				console.dir('before');
-			},
-			'require':'frag/h.tpl',
-			'bind':'js/bind0.json',
-			//ele:document.getElementById('contentid')
-		},
-	    '*': function(){
-	        console.log(404);
-	    }
-	},'#contentid');
-</script>
-<!--<script data-baseurl="./" data-main="main.js" src="libs/require.js" id="main"></script>-->
+	<a href="#module2/1/2">module2</a>
+
+	<a href="#module2/name1/age1">module3</a>
+
+	<a href="#module/module4">module4</a>
+
+	<a href="#module5/parm1/parm1">module5</a>
+	<script>
+		Base.Require.bindNotify('routeNotify',function(){
+			Route.init({
+				'module1': function(){
+					console.log(1);
+				},
+				'module2/:name/:age': function(){
+					console.log(2, arguments);
+				},
+				'module3(/:name)(/:age)': function(){
+					console.log('3', arguments);
+				},
+				'module/module4': {
+					before:function(){
+						console.dir('before');
+					},
+					'require':'frag/h.tpl',
+					'bind':'js/bind0.json',
+					//ele:document.getElementById('contentid')
+				},
+				'module5/:parm1/:parm2': {
+					before:function(){
+						//获取路由参数
+						console.dir(Route.param());
+					},
+					'require':'frag/h.tpl',
+					'bind':'js/bind0.json',
+					//ele:document.getElementById('contentid')
+				},
+				'*': function(){
+					console.log(404);
+				}
+			},'#contentid');
+		});
+	</script>
 </body>
 </html>

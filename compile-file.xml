@@ -6,6 +6,7 @@
 		storage.js,
 		require.js,
 		options.js,
+		route.js,
 	</property>
 
 	<property name="baseFileList">
@@ -19,7 +20,7 @@
 		format.js,
 		xhr.js,
 		template.js,
-		route.js,
+
 	</property>
 
 	<property name="allFileList">
@@ -36,5 +37,6 @@
 		options.js,
 		xhr.js,
 		template.js,
+		route.js,
 	</property>
 </project>

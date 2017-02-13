@@ -6,6 +6,9 @@
 		de = document.documentElement,
 		//document对象全局定义
 		global = g.document,
+
+		//浏览器地址栏参数model=dev,表强制使用dev模式
+		forceDev = false,
 		//终止
 		EOF = und,
 
@@ -27,7 +30,7 @@
 		})(),
 
 		gopt = {
-			model: att(de, 'model') || 'cache',
+			model: forceDev || att(de, 'model') || 'cache',
 			assets: att(de, 'assets') || '',
 			version: att(de, 'version') || 0,
 			cdncache: att(de, 'cdncache') == 'true',
@@ -35,6 +38,21 @@
 			success: att(de, 'onsuccess'),
 			progress: att(de, 'onprogress')
 		};
+
+	//读取浏览器参数, model=dev表示强制使用开发模式
+	(function() {
+		var pars = location.search.substring(1);
+		if (pars) {
+			var reg = /([^&=]+)=([^&]*)/g,
+				m;
+			while (m = reg.exec(pars)) {
+				if (m[1] == 'model') {
+					m[2] == 'dev' && (forceDev = 'dev');
+					break;
+				}
+			}
+		}
+	})();
 
 	function depend(arr, opt) {
 		var self = this;
@@ -376,7 +394,7 @@
 				method = 'replaceWith';
 			include(frag);
 			if (dom) {
-				dom.wasRequire = true;
+				//dom.wasRequire = true;
 				//console.log(frag.querySelectorAll('include,require'));
 				//dom[append = 'append' ? 'appendChild' : 'replaceWith'](frag);
 				//dom.replaceWith(frag);
@@ -564,11 +582,12 @@
 				//		 script节点内部的js代码不会被执行,只能当做文本处理
 				!u && (u = dom.text || dom.innerHTML);
 				if (u && !dom['wasRequire']) {
+					dom.wasRequire = true;
 					opt = {
 						original: dom,
 						observer: dom.hasAttribute('observer'),
 						//pos:att(dom, 'model')
-						model: att(dom, 'model') || gopt.model,
+						model: forceDev || att(dom, 'model') || gopt.model,
 						assets: att(dom, 'assets') || gopt.assets,
 						version: att(dom, 'version') || gopt.version,
 						cdncache: att(dom, 'cdncache') || gopt.cdncache,

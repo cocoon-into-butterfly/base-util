@@ -13,10 +13,14 @@
 		 * @return {Void}
 		 */
 		init: function(map, root) {
+			this.rebuild(map, root)
+			fire(g.location.hash);
+		},
+
+		rebuild: function(map, root) {
 			for (var k in map) {
 				add(k, map[k], root);
 			}
-			fire(g.location.hash);
 		},
 
 		/**
@@ -37,6 +41,12 @@
 		},
 
 		/**
+		 * 获取路由参数
+		 * @type {[type]}
+		 */
+		param: param,
+
+		/**
 		 * 添加路由
 		 */
 		add: add,
@@ -50,31 +60,50 @@
 	};
 
 	/**
+	 * 获取路由参数
+	 * @return {[type]} [description]
+	 */
+	function param() {
+		var newURL = g.location.hash,
+			answer = [];
+		if (newURL) {
+			var url = newURL.replace(/.*#/, '');
+			for (var path in routes) {
+				var reg = getRegExp(path),
+					result = reg.exec(url);
+				if (result && result[0]) {
+					answer = result.slice(1);
+					answer.pop();
+					break;
+				}
+			}
+		}
+		return answer;
+	}
+
+	/**
 	 * 添加路由规则
 	 * @param {[type]} k   [description]
 	 * @param {[type]} obj [description]
 	 */
 	function add(k, obj, root) {
 		var before, require, bind, ele;
-		if (k == '*') {
-			obj && (defaultAction = obj);
+		if (typeof obj === 'function') {
+			before = obj;
 		} else {
-			if ((typeof obj === 'function')) {
-				before = obj;
-			} else {
-				before = obj['before'];
-				require = obj['require'];
-				bind = obj['bind'];
-				ele = obj['ele'] || root;
-				ele = typeof ele === 'string' ? document.querySelector(ele) : ele;
-			}
-			routes[k] = {
-				before: before,
-				ele: ele,
-				require: require,
-				bind: bind
-			};
+			before = obj['before'];
+			require = obj['require'];
+			bind = obj['bind'];
+			ele = obj['ele'] || root;
+			ele = typeof ele === 'string' ? document.querySelector(ele) : ele;
 		}
+		obj = {
+			before: before,
+			ele: ele,
+			require: require,
+			bind: bind
+		};
+		k == '*' ? (defaultAction = obj) : (routes[k] = obj);
 	}
 
 	/**
@@ -92,23 +121,33 @@
 				result = reg.exec(url);
 			if (result && result[0] && result[0] != '') {
 				handler = routes[path];
-				if (handler) {
-					handler.before && handler.before.apply(null, result.slice(1));
-					if (handler.ele) {
-						handler.bind && handler.ele.setAttribute('bind', handler.bind);
-						handler.require && handler.ele.setAttribute('require', handler.require);
-					}
-				}
-				found = true;
+				result.pop();
+				handler && (found = true, routePath(handler, result));
 			}
 		}
-		if (!found && defaultAction) {
-			defaultAction();
+
+		!found && defaultAction && routePath(defaultAction, result);
+	}
+
+	/**
+	 * 执行路由规则
+	 * @param  {[type]} handler [description]
+	 * @param  {[type]} result  [description]
+	 * @return {[type]}         [description]
+	 */
+	function routePath(handler, result) {
+		var ele = handler.ele;
+		handler.before && handler.before.apply(null, result && result.slice(1));
+		//发起require请求
+		//<div require="frag/g.tpl" bind="js/bind.json" observer></div>
+		if (ele) {
+			handler.bind && ele.setAttribute('bind', handler.bind);
+			handler.require && ele.setAttribute('require', handler.require);
 		}
 	}
 
 	/**
-	 * 引自backbone，非常牛逼的正则
+	 * 参数正则表达式
 	 * @param route
 	 * @returns {RegExp}
 	 */
