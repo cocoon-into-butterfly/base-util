@@ -1,1 +1,1 @@
-(function(f,g){for(var b=function(a){for(var c in a)b[c]=a[c]},d=/([^&=]+)=([^&]*)/g,e=location.search.substring(1),a;a=d.exec(e);)b[decodeURIComponent(a[1])]=decodeURIComponent(a[2]);Base.Options=b})(window);
+!function(o,n){for(var e,i=function(o){for(var n in o)i[n]=o[n]},t=/([^&=]+)=([^&]*)/g,c=location.search.substring(1);e=t.exec(c);)i[decodeURIComponent(e[1])]=decodeURIComponent(e[2]);o.Options=Base.Options=i}(window);

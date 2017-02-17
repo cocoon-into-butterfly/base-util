@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<script src="../src/base.js" ></script>
+		<script src="../src/cookie.js"  charset="utf-8"></script>
+		<title></title>
+	</head>
+	<body>
+		<script type="text/javascript">
+
+			//当前session有效
+			Base.Cookie.add('test1','test');
+
+			//存储1天
+			Base.Cookie.add('test2','test', 1);
+
+			//存储1周
+			Base.Cookie.add('test3','test', 7);
+
+			//存储2周
+			Base.Cookie.add('test4','test', 14);
+
+			//持久化存储cookie(365天失效, 每次读取重新设置失效时间),
+			Base.Cookie.persist('test5','test');
+
+			//获取cookie
+			console.log(" test5 = " + Base.Cookie.get('test5'));
+
+			//删除
+			Base.Cookie.del('test1');
+
+			//修改cookie
+			Base.Cookie.update('test2','test2');
+
+		</script>
+	</body>
+</html>

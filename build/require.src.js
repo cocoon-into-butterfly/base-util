@@ -1,5 +1,5 @@
 
-// build time: 20170212
+// build time: 20170217
 		/* minifyOnSave, filenamePattern: ../dist/$1.$2 */
 
 (function(g, und) {
@@ -360,7 +360,7 @@
 	 * @return {[type]}     [description]
 	 */
 	function rov(ele) {
-		ele && ele.parentElement && ele.parentNode.removeChild(ele);
+		ele && ele.tagName != 'BODY' && ele.parentElement && ele.parentNode.removeChild(ele);
 	}
 
 	/**
@@ -536,7 +536,8 @@
 		var res = stripScripts(str);
 		if (res[0]) {
 			var frag = fragment(res[0]),
-				method = 'replaceWith';
+				//如果节点是body,只能appendChild, 其他节点replaceWith
+				method = dom.tagName == 'BODY' ? 'appendChild' : 'replaceWith';
 			include(frag);
 			if (dom) {
 				//dom.wasRequire = true;
@@ -562,7 +563,7 @@
 						})
 					)
 				}
-				dom[method](frag);
+				method == 'replaceWith' ? dom.parentElement.replaceChild(frag, dom) : dom[method](frag);
 			} else {
 				global.body.appendChild(frag);
 			}
@@ -708,43 +709,65 @@
 
 	var requireTag = function(deps, append, callback) {
 		var dom,
-			u,
+			u, trigger,
 			opt;
 		if (deps.length > 0) {
 			for (var i = 0, l = deps.length; i < l; i++) {
 				dom = deps[i];
-				//在在节点上查找 depends  require src href 属性内容引入资源
-				//例如:
-				//	<script type="text/javascript" src="../src/require.js" require="a.css,b.js"/></script>
-				u = att(dom, ['depends', 'require', 'include', 'src', 'href']);
-				//如果属性上无法查找到引入的资源,在资源的内部查找文本,作为资源进行引入
-				//例如:
-				//	<script type="text/javascript" src="../src/require.js" >
-				//		a.css
-				//		b.js
-				//	</script>
-				//	注意: 这种写法script节点上有src属性, 节点内部内容不会被执行. 浏览器只会加载src指定的js文件
-				//		 script节点内部的js代码不会被执行,只能当做文本处理
-				!u && (u = dom.text || dom.innerHTML);
-				if (u && !dom['wasRequire']) {
-					dom.wasRequire = true;
-					opt = {
-						original: dom,
-						observer: dom.hasAttribute('observer'),
-						//pos:att(dom, 'model')
-						model: forceDev || att(dom, 'model') || gopt.model,
-						assets: att(dom, 'assets') || gopt.assets,
-						version: att(dom, 'version') || gopt.version,
-						cdncache: att(dom, 'cdncache') || gopt.cdncache,
-						notify: att(dom, 'notify') || gopt.notify,
-						success: att(dom, 'onsuccess') || gopt.success,
-						progress: att(dom, 'onprogress') || gopt.progress,
-						callback: callback
+				trigger = att(dom, ['trigger']);
+				if (trigger) {
+					global[el](trigger, function(e) {
+						var tr = '[trigger="' + e.type + '"]';
+						[
+							'require' + tr + ',[require]' + tr + '',
+							'include' + tr + ',[include]' + tr + ''
+						].forEach(function(v) {
+							var req = global.querySelectorAll(v);
+							if (req.length > 0) {
+								var arr = [];
+								for (var i = 0; i < req.length; i++) {
+									req[i].removeAttribute("trigger");
+									arr.push(req[i]);
+								}
+								requireTag(arr);
+							}
+						});
+					}, false);
+				} else {
+					//在在节点上查找 depends  require src href 属性内容引入资源
+					//例如:
+					//	<script type="text/javascript" src="../src/require.js" require="a.css,b.js"/></script>
+					u = att(dom, ['depends', 'require', 'include', 'src', 'href']);
+					//如果属性上无法查找到引入的资源,在资源的内部查找文本,作为资源进行引入
+					//例如:
+					//	<script type="text/javascript" src="../src/require.js" >
+					//		a.css
+					//		b.js
+					//	</script>
+					//	注意: 这种写法script节点上有src属性, 节点内部内容不会被执行. 浏览器只会加载src指定的js文件
+					//		 script节点内部的js代码不会被执行,只能当做文本处理
+					!u && (u = dom.text || dom.innerHTML);
+					if (u && !dom['wasRequire']) {
+						dom.wasRequire = true;
+						opt = {
+							original: dom,
+							observer: dom.hasAttribute('observer'),
+							//pos:att(dom, 'model')
+							model: forceDev || att(dom, 'model') || gopt.model,
+							assets: att(dom, 'assets') || gopt.assets,
+							version: att(dom, 'version') || gopt.version,
+							cdncache: att(dom, 'cdncache') || gopt.cdncache,
+							notify: att(dom, 'notify') || gopt.notify,
+							success: att(dom, 'onsuccess') || gopt.success,
+							progress: att(dom, 'onprogress') || gopt.progress,
+							callback: callback
+						}
+						u = toArray(u);
+						u.length > 0 && new depend(u, opt);
+						//u && req.push.apply(req, u);
 					}
-					u = toArray(u);
-					u.length > 0 && new depend(u, opt);
-					//u && req.push.apply(req, u);
 				}
+
 			}
 		}
 	}
@@ -802,7 +825,7 @@
 	while (m = reg.exec(pars)) {
 		o[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
 	}
-	Base.Options = o
+	g.Options = Base.Options = o
 })(window);
 
 /* minifyOnSave, filenamePattern: ../dist/$1.$2 */

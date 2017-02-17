@@ -13,5 +13,5 @@
 	while (m = reg.exec(pars)) {
 		o[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
 	}
-	Base.Options = o
+	g.Options = Base.Options = o
 })(window);

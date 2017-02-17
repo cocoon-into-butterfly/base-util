@@ -20,7 +20,7 @@
 		format.js,
 		xhr.js,
 		template.js,
-
+		cookie.js,
 	</property>
 
 	<property name="allFileList">
@@ -38,5 +38,6 @@
 		xhr.js,
 		template.js,
 		route.js,
+		cookie.js,
 	</property>
 </project>

@@ -21,7 +21,7 @@
 			});
 		</script>
 	</head>
-	<body>
+	<body style="display:none">
 		include 标签用于请求html文件,不能请求js和css文件,请查看源码.<br /><br /><br />
 
 		<!--
@@ -37,7 +37,7 @@
 
 		<div><include src="frag/a.html"></include></div>
 		<div><include src="frag/b.html"></include></div>
-		<div><include src="frag/c.html"></include></div>
+		<div><include src="frag/c.html" notify="wasincludeover"></include></div>
 		<!-- 包含多级嵌套include标签 -->
 
 
@@ -60,3 +60,8 @@
 		-->
 	</body>
 </html>
+<script type="text/javascript">
+	Require.bindNotify('wasincludeover',function(){
+		document.body.style.display=""
+	})
+</script>
