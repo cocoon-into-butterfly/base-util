@@ -1,5 +1,5 @@
 
-// build time: 20170217
+// build time: 20170306
 		/* minifyOnSave, filenamePattern: ../dist/$1.$2 */
 
 (function(g, und) {
@@ -163,6 +163,9 @@
 		//当前时间戳,进行远程请求时添加时间戳,防止cnd缓存
 		timestep = (new Date()).getTime(),
 
+		//css文件中相对路径替换的正则表达式
+		relative = /(\.\.\/)+/g,
+
 		//正则表达式分离script标签
 		//ScriptFragment = '<script[^>]*>([\\S\\s]*?)<\/script\\s*>',
 		ScriptFragment = '<script\\s*type="text/javascript"[^>]*>([\\S\\s]*?)<\/script\\s*>',
@@ -177,6 +180,7 @@
 		gopt = {
 			model: forceDev || att(de, 'model') || 'cache',
 			assets: att(de, 'assets') || '',
+			domain: att(de, 'domain') || '',
 			version: att(de, 'version') || 0,
 			cdncache: att(de, 'cdncache') == 'true',
 			notify: att(de, 'notify'),
@@ -222,6 +226,7 @@
 					res.push(self.opt.observer);
 					//pre == 'html' || pre == 'tpl' && (res[0] = global.body, res.push('append'));
 				}
+				res.opt = opt;
 				res.original = self.opt.original;
 			}
 			return res;
@@ -320,7 +325,14 @@
 		js: function(dom, code, fn) {
 			evalScripts(dom, code, fn);
 		},
-		css: function(dom, code, fn) {
+		css: function(dom, code, fn, item) {
+
+			//css中背景图片和字体大部情况下使用的是相对路径, 使用require引入后对象路径发生了变化, 原来的相对路径发生了错误
+			//导致图片和字体全部失效.
+			//目前粗暴的解决办法就是把: css中相对路径为绝对路径
+			if (code && item.opt && item.opt.assets) {
+				code = code.replace(relative, item.opt.assets);
+			}
 			var node = create('style', {
 				type: "text/css"
 			});
@@ -411,7 +423,7 @@
 	 * @return {[type]}     [description]
 	 */
 	function burl(item, opt) {
-		var a = opt['assets'],
+		var a = opt['domain'],
 			cdn = opt['cdncache'],
 			u = item[1],
 			pos = u.lastIndexOf('?');
@@ -678,6 +690,7 @@
 			callback: opt,
 			model: gopt.model,
 			assets: gopt.assets,
+			domain: gopt.domain,
 			version: gopt.version,
 			cdncache: gopt.cdncache,
 			notify: gopt.notify,
@@ -755,6 +768,7 @@
 							//pos:att(dom, 'model')
 							model: forceDev || att(dom, 'model') || gopt.model,
 							assets: att(dom, 'assets') || gopt.assets,
+							domain: att(dom, 'domain') || gopt.domain,
 							version: att(dom, 'version') || gopt.version,
 							cdncache: att(dom, 'cdncache') || gopt.cdncache,
 							notify: att(dom, 'notify') || gopt.notify,
@@ -773,7 +787,8 @@
 	}
 	requireTag(global.querySelectorAll('script[depends],script[require]'), head)
 	var handler = function() {
-		global.removeEventListener("DOMContentLoaded", handler, false);
+		debugger;
+		//global.removeEventListener("DOMContentLoaded", handler, false);
 		include(global);
 	}
 	global[el]("DOMContentLoaded", handler, false);

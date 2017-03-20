@@ -34,20 +34,20 @@
 
 		<!-- 导入依赖的css和js -->
 		<!--
-			<require>
+			<script type="text/javascript" src="../dist/require.js" notify="requireReady" require="" >
 				css/normalize.css
 				css/...
 				js/base.js
 				js/jquery.js
 				js/swiper.js
 				js/...
-			</require>
+			</script>
 		-->
 	</head>
 	<body>
 		<!-- 导入轻应用页面结构 -->
 		<!--
-			<include src="">
+			<include src="" trigger="requireReady" notify="domReady" >
 				frag/head.html
 				frag/content.html
 				frag/footer.html

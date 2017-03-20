@@ -4,25 +4,23 @@
 (function(g, und) {
 	//input type="file"
 	//上传图片文件
-	function upimg(file, compress, progress, url, fn) {
+	function upimg(file, isCompress, url, fn) {
 		var reader = new FileReader();
 		reader.addEventListener('loadend', function() {
 			var upfile = function(blob, type) {
-				alert('暂未实现, 需要时在加上.');
-				// jEditor.Ajax.ajax({
-				// 	url: url,
-				// 	method: 'post',
-				// 	dataType: 'json',
-				// 	data: blob,
-				// 	progress: progress,
-				// 	headers: {
-				// 		Filename: encodeURIComponent(file.name)
-				// 	}
-				// }).then(function(e) {
-				// 	fn && fn(e);
-				// });
-			}
-			compress ? compress(reader.result, file.type, {
+				var xhr = new XMLHttpRequest();
+				xhr.onreadystatechange = function() {
+					if (xhr.readyState == 4 && xhr.status == 200) {
+						var text = JSON.parse(xhr.responseText);
+						fn && fn(text);
+					}
+				};
+				xhr.open('POST', url);
+				xhr.setRequestHeader('Content-Type', type);
+				xhr.setRequestHeader('Filename', encodeURIComponent(file.name));
+				xhr.send(blob);
+			};
+			isCompress ? compress(reader.result, file.type, {
 				width: 640
 			}, 0.8, upfile) : upfile(new Blob([reader.result], {
 				type: file.type
@@ -56,7 +54,8 @@
 			canvas.height = finalHeight;
 			ctx.drawImage(img, 0, 0, finalWidth, finalHeight);
 
-			var bin = (type === 'image/gif' && orignalWidth <= compressSize.width) ? atob(imgURI.split(',')[1]) : atob(canvas.toDataURL(
+			var bin = (type === 'image/gif' && orignalWidth <= compressSize.width) ?
+				atob(imgURI.split(',')[1]) : atob(canvas.toDataURL(
 					type, quality).split(',')[1]),
 				len = bin.length,
 				len32 = len >> 2,
@@ -69,16 +68,14 @@
 					bin.charCodeAt(j++) << 16 |
 					bin.charCodeAt(j++) << 24;
 			}
-
 			var tailLength = len & 3;
-
 			while (tailLength--) {
 				a8[j] = bin.charCodeAt(j++);
 			}
-
 			success(new Blob([a8], {
-				'type': type || 'image/png'
-			}), (type === 'image/gif' && orignalWidth > compressSize.width) ? 'image/png' : type);
+					'type': type || 'image/png'
+				}), (type === 'image/gif' && orignalWidth > compressSize.width) ?
+				'image/png' : type);
 
 
 		}
@@ -91,26 +88,17 @@
 		var reader = new FileReader();
 		reader.addEventListener('loadend', function() {
 			var upfile = function(blob, type) {
-				alert('暂未实现, 需要时在加上.');
-				// var xhr = new XMLHttpRequest();
-				// xhr.onreadystatechange = function() {
-				// 	if (xhr.readyState == 4 && xhr.status == 200) {
-				// 		var text = JSON.parse(xhr.responseText);
-				// 		if (text.ec == -100) {
-				// 			window.location.href = "login.html";
-				// 		} else if (text.ec == -1) {
-				// 			loading.hide();
-				// 			def.reject(text);
-				// 		} else {
-				// 			loading.hide();
-				// 			def.resolve(text);
-				// 		}
-				// 	}
-				// };
-				// xhr.open('POST', url);
-				// xhr.setRequestHeader('Content-Type', type);
-				// xhr.setRequestHeader('Filename', encodeURIComponent(file.name));
-				// xhr.send(blob);
+				var xhr = new XMLHttpRequest();
+				xhr.onreadystatechange = function() {
+					if (xhr.readyState == 4 && xhr.status == 200) {
+						var text = JSON.parse(xhr.responseText);
+						setting.success && settings.success(text);
+					}
+				};
+				xhr.open('POST', url);
+				xhr.setRequestHeader('Content-Type', type);
+				xhr.setRequestHeader('Filename', encodeURIComponent(file.name));
+				xhr.send(blob);
 			};
 			upfile(new Blob([reader.result], {
 				type: file.type
@@ -120,8 +108,9 @@
 	}
 
 	//export
-	g.Upload = Base.Upload = {
+	g.Upload = BASE.Upload = {
 		file: up,
-		img: upimg
-	}
+		img: upimg,
+		compress: compress
+	};
 })(window);

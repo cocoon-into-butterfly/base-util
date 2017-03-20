@@ -1,29 +1,35 @@
 <!DOCTYPE html>
-<html model="release" version="v1.0.0" cdncache="false">
+<html model="release" version="v1.0.0" cdncache="false" lapp="">
 	<head>
 		<meta charset="utf-8">
 		<link rel="shortcut icon" href="assets/img/logo.png"/>
 		<title>example</title>
+
 		<script type="text/javascript" src="../build/require.min.js" notify="requireReady" require="">
 			assets/css/normalize.css
 			lib/jquery.min.js
 		</script>
-		<script type="text/javascript">
-			Base.Require.bindNotify('requireReady',function(e){
-				$(document).ready(function(e){
-					console.dir("jQueryReady");
-				})
-			});
-		</script>
 	</head>
-	<body>
-		<include src="">
-			fragment/head.html
-			fragment/content.html
-			fragment/foot.html
-		</include>
-		<include src=""></include>
-		<include src=""></include>
+	<body require="main.html" observer>
+
+
 
 	</body>
 </html>
+<script>
+	Route.init({
+		'module/:path':function(){
+			document.body.setAttribute('require',location.hash.substring(1));
+		},
+		'module/module4': {
+			before:function(){
+				console.dir('before');
+			},
+			'require':'frag/h.tpl',
+			'bind':'js/bind0.json',
+		},
+		'*': function(){
+			console.log('default');
+		}
+	});
+</script>

@@ -4,27 +4,27 @@
 		<meta charset="utf-8">
 		<title>Lapp title example</title>
 
-		<!-- 导入依赖的css和js -->
-		<!--
-			<require>
-				css/normalize.css
-				css/...
-				js/base.js
-				js/jquery.js
-				js/swiper.js
-				js/...
-			</require>
-		-->
+		<!-- 导入依赖的css -->
+		<script type="text/javascript"  src="/lib/base/require.src.js" notify="cssReady" require="">
+			/assets/css/mui.min.css
+			/assets/css/icons-extra.css
+			/assets/css/style.css
+		</script>
 	</head>
 	<body>
 		<!-- 导入轻应用页面结构 -->
-		<!--
-			<include src="">
-				frag/head.html
-				frag/content.html
-				frag/footer.html
-			</include>
-		-->
+		<include src="main.tpl" notify="domReady" trigger="cssReady"></include>
 	</body>
+
+	<!-- 导入轻应用页面结构 -->
+	<require style="display:none;" notify="allReady" trigger="domReady">
+		/lib/jq/jquery.min.js
+		/lib/mui/mui.js
+	</require>
+	<script type="text/javascript">
+		Base.Require.bindNotify('allReady',function(e){
+			console.log('allReady');
+		});
+	</script>
 </html>
 <!-- require js -->
